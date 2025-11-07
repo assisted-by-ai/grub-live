@@ -440,16 +440,16 @@ get_mount_list_to_harden() {
     ## Avoid mounting overlays on mounts that are going to end up hidden.
     if [ "${allow_hide_submounts}" = 'true' ]; then
       ## Mark all submounts so that they are not overlaid.
-      for target_dir_idx in "${!target_overlay_mount_list[@]}"; do
-        target_dir="${target_overlay_mount_list[target_dir_idx]}"
-        if [ "${target_dir}" != "${target_overlay_mount}" ] \
-          && [[ "${target_dir}" =~ ^"${target_overlay_mount}" ]]; then
-          skip_dir_overlay_bool_list[target_dir_idx]='true'
-        fi
-      done
-    fi
-  done
-}
+        for target_dir_idx in "${!target_overlay_mount_list[@]}"; do
+          target_dir="${target_overlay_mount_list[target_dir_idx]}"
+          if [ "${target_dir}" != "${target_overlay_mount}" ] \
+            && [[ "${target_dir}" == "${target_overlay_mount%/}/"* ]]; then
+            skip_dir_overlay_bool_list[target_dir_idx]='true'
+          fi
+        done
+      fi
+    done
+  }
 
 ## Remounts filesystems read-only and applies tmpfs overlays.
 harden_mounts() {
